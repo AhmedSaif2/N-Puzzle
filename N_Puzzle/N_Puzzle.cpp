@@ -5,6 +5,7 @@
 #include <queue>
 #include <map>
 #include <set>
+
 using namespace std;
 
 int n;
@@ -148,17 +149,14 @@ string getMatrixID(int*arr[]) {
 void Astar(state root,int choice) {
 	priority_queue<state, vector<state>, Compare>pq;
 	pq.push(root);
-	
-	if (n == 3) {
-		string rootID = getMatrixID(root.Matrix);
-		route[rootID] = "";
-	}
+	string rootID = getMatrixID(root.Matrix);
+	route[rootID] = "";
 	int cnt = 0;
 	while (!pq.empty()) {
 		state currentstate = pq.top();
 		pq.pop();
 		string parentID;
-		if (n == 3) { parentID=getMatrixID(currentstate.Matrix); }
+		parentID=getMatrixID(currentstate.Matrix);
 		pair<int, int>cur = FindZero(currentstate.Matrix);// N
 		int x = cur.first, y = cur.second;
 		for (int i = 0; i < 4; i++) {
@@ -180,16 +178,13 @@ void Astar(state root,int choice) {
 					
 				state st = { newState,currentstate.state_depth + 1,h,cur};
 				string ID;
-				if (n == 3) {
-					ID=getMatrixID(currentstate.Matrix);
-					if (route.find(ID)==route.end())route[ID] = parentID;
-				}
+				
+				ID=getMatrixID(newState);
+				if (route.find(ID)==route.end())route[ID] = parentID;
 
 				if (h == 0) {
-					cout << "Distance = " << currentstate.state_depth+1 << endl;
-					if (n == 3) {
-						PrintPath(ID);
-					}
+					cout << "Number of Moves = " << currentstate.state_depth+1 << endl;
+					PrintPath(getMatrixID(currentstate.Matrix));
 					return;
 				}
 				pq.push(st);
@@ -246,50 +241,46 @@ int main()
 {
 
 	int** arr;
-	string tests[20] = { "TEST.txt","15 Puzzle 1.txt","15 Puzzle 3.txt","15 Puzzle 4.txt","15 Puzzle 5.txt","8 Puzzle (2).txt","15 Puzzle - 1.txt",
-	"50 Puzzle.txt","99 Puzzle - 1.txt","99 Puzzle - 2.txt","9999 Puzzle.txt","TEST.txt"};
-	
-	for (int t = 0; t < 1; t++) {
-		//clock_t Totaltime = clock();
-		//path.clear();
-		route.clear();
-		ifstream input(tests[t]);
-		input >> n;
+	string test = "8 Puzzle (2).txt";
+	string folderName = "8 puzzle";
+	route.clear();
+	ifstream input(folderName + '/' + test);
+	input >> n;
 		
-		//2D array dynamic allocation 
-		arr = new int* [n];
-		for (int i = 0; i < n; i++) {
-			arr[i] = new int[n];
-		}
-
-		// taking 2D array from file
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				input >> arr[i][j];
-			}
-		}
-
-		if (!IsSolvable(arr)) {
-			cout << "UnSolvable" << endl;
-			return 0;
-		}
-		cout << "Solavable" << endl;
-
-		int choice =2; 	//1 for Hamming 2 for Manhatten
-		// Solve 
-		state root;
-		root.Matrix = arr;
-
-		if (choice == 1)root.heuristic_value = Hamming(root.Matrix);
-		else if (choice == 2)root.heuristic_value = Manhattan(root.Matrix);
-		root.p=FindZero(root.Matrix);
-		root.state_depth = 0;
-		clock_t Totaltime = clock();
-		Astar(root,choice);
-		//BFS(root.Matrix);
-		Totaltime = clock() - Totaltime;
-		cout << (float)Totaltime / CLOCKS_PER_SEC << endl;
+	//2D array dynamic allocation 
+	arr = new int* [n];
+	for (int i = 0; i < n; i++) {
+		arr[i] = new int[n];
 	}
+
+	// taking 2D array from file
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			input >> arr[i][j];
+		}
+	}
+
+	if (!IsSolvable(arr)) {
+		cout << "UnSolvable" << endl;
+		return 0;
+	}
+	cout << "Solavable" << endl;
+
+	int choice = 2; 	//1 for Hamming OR 2 for Manhatten
+	state root;
+	root.Matrix = arr;
+	if (choice == 1)root.heuristic_value = Hamming(root.Matrix);
+	else if (choice == 2)root.heuristic_value = Manhattan(root.Matrix);
+	root.p=FindZero(root.Matrix);
+	root.state_depth = 0;
+
+	clock_t Totaltime = clock();
+
+	Astar(root,choice);
+
+	Totaltime = clock() - Totaltime;
+	cout << "Time: " << (float)Totaltime / CLOCKS_PER_SEC << "s" << endl;
+
 	return 0;
 }
 

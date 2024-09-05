@@ -1,0 +1,3 @@
+﻿  N_Puzzle.cpp
+C:\Users\10\source\repos\N-Puzzle\N_Puzzle\N_Puzzle.cpp(104): warning C4715: 'FindZero': not all control paths return a value
+  N_Puzzle.vcxproj -> C:\Users\10\source\repos\N-Puzzle\x64\Debug\N_Puzzle.exe
